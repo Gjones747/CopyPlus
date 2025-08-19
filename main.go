@@ -28,7 +28,6 @@ func main() {
 	go internal.ImageWatcher(stack)
 	go internal.TextWatcher(stack)
 	// starter := hook.Start()
-	// prolly wont need the hook
 	// <-hook.Process(starter)
 	select{}
 }
