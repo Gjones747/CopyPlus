@@ -6,29 +6,28 @@ import (
 	"golang.design/x/clipboard"
 
 	"github.com/Gjones747/goCopyPaste/api"
-
+	"github.com/Gjones747/goCopyPaste/internal"
 	hook "github.com/robotn/gohook"
 )
 
 func main() {
 
+	stack := new(api.CopyDeque)
+
 	hook.Register(hook.KeyDown, []string{"c", "cmd"}, func(e hook.Event) {
 		fmt.Println("sixe sevenn")
 
-		hook.End()
 	})
 
-	stack := new(api.CopyDeque)
 	if err := clipboard.Init(); err != nil {
 		fmt.Println("failed to setup clipboard")
 	}
-	stack.PushFrontLeakBack(clipboard.Read(clipboard.FmtText))
 
-	if front, err := stack.GetFront(); err == nil {
-		fmt.Println(string(front))
-	} else {
-		fmt.Println(err.Error())
-	}
-	starter := hook.Start()
-	<-hook.Process(starter)
+	// individual threads
+	// so both threads can work together
+	go internal.ImageWatcher(stack)
+	go internal.TextWatcher(stack)
+	// starter := hook.Start()
+	// <-hook.Process(starter)
+	select{}
 }
